@@ -1,4 +1,4 @@
-import {Injectable, signal} from '@angular/core';
+import {Injectable, OnInit, signal, EventEmitter} from '@angular/core';
 import {LoginUser, UserResponse} from '../../app/features/logincomponent/logincomponent.component';
 import {HttpClient} from '@angular/common/http';
 import {catchError, map, Observable, of, tap} from 'rxjs';
@@ -17,14 +17,12 @@ export class AuthService {
 
   private loginUrl = 'api/users';
 
-  currentUser = signal<UserResponse | null>(this.getUserFromStorage());
+  currentUser: UserResponse | null = {} as UserResponse;
+
+  // EventEmitter để thông báo khi user thay đổi
+  userChanged = new EventEmitter<void>();
 
   constructor(private http: HttpClient) {
-  }
-
-  private getUserFromStorage(): UserResponse | null {
-    const stored = localStorage.getItem('userG');
-    return stored ? JSON.parse(stored) : null;
   }
 
   private setCurrentUser(userResponse: UserResponse | null) {
@@ -33,7 +31,7 @@ export class AuthService {
     } else {
       localStorage.removeItem('userG');
     }
-    this.currentUser.set(userResponse);  // ← THIẾU DÒNG NÀY!
+    this.userChanged.emit();  // ← Thông báo user đã thay đổi
   }
 
   login(loginData: LoginUser): Observable<any> {

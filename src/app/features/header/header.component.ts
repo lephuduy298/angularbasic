@@ -11,7 +11,7 @@ import {AuthService} from '../../../core/services/auth.service';
   styleUrl: './header.component.scss',
   standalone: true
 })
-export class HeaderComponent  {
+export class HeaderComponent implements OnInit {
   isProductMenuOpen = false;
   isMobileMenuOpen = false;
   isMobileProductMenuOpen = false;
@@ -19,7 +19,21 @@ export class HeaderComponent  {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  currentUser = this.authService.currentUser;
+  currentUser: UserResponse | null = {} as UserResponse;
+
+  ngOnInit() {
+    this.setCurrentUser();
+
+    // Lắng nghe sự thay đổi user từ AuthService
+    this.authService.userChanged.subscribe(() => {
+      this.setCurrentUser();
+    });
+  }
+
+  setCurrentUser() {
+    const stored = localStorage.getItem("userG");
+    this.currentUser = stored ? JSON.parse(stored) : null;
+  }
 
   toggleProductMenu(): void {
     this.isProductMenuOpen = !this.isProductMenuOpen;
@@ -39,6 +53,7 @@ export class HeaderComponent  {
 
   logout() {
     this.authService.logout();
+    this.setCurrentUser();  // ← Cập nhật lại currentUser ngay sau khi logout
     this.router.navigate(['/']);
   }
 }
