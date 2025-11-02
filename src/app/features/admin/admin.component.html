@@ -1,0 +1,76 @@
+<div class="flex min-h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <aside [ngClass]="isCollapsed ? 'w-16' : 'w-56'"
+         class="bg-gray-800 text-white transition-all duration-300 ease-in-out">
+
+    <!-- Header with Toggle Button -->
+    <div class="flex items-center justify-between p-4 border-b border-gray-700">
+      @if(!isCollapsed) {
+        <span class="text-lg font-bold">My Admin</span>
+      }
+      <button (click)="toggleSidebar()"
+              class="p-2 rounded hover:bg-gray-700 transition ml-auto">
+        <i [ngClass]="isCollapsed ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left'"></i>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="p-4 space-y-2">
+      <a routerLink="/admin/home"
+         routerLinkActive="bg-gray-700"
+         [title]="isCollapsed ? 'Home' : ''"
+         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
+         <i class="fa-solid fa-house" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
+        @if(!isCollapsed) {
+          <span>Home</span>
+        }
+      </a>
+
+      <a routerLink="/admin/products"
+         routerLinkActive="bg-gray-700"
+         [title]="isCollapsed ? 'Products' : ''"
+         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
+         <i class="fa-solid fa-box" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
+        @if(!isCollapsed) {
+          <span>Orders</span>
+        }
+      </a>
+
+      <a routerLink="/admin/orders"
+         routerLinkActive="bg-gray-700"
+         [title]="isCollapsed ? 'Orders' : ''"
+         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
+         <i class="fa-solid fa-cart-shopping" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
+        @if(!isCollapsed) {
+          <span>Products</span>
+        }
+      </a>
+
+      <a routerLink="/admin/customers"
+         routerLinkActive="bg-gray-700"
+         [title]="isCollapsed ? 'Customers' : ''"
+         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
+         <i class="fa-solid fa-users" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
+        @if(!isCollapsed) {
+          <span>Teams</span>
+        }
+      </a>
+
+      <a routerLink="/admin/reports"
+         routerLinkActive="bg-gray-700"
+         [title]="isCollapsed ? 'Reports' : ''"
+         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
+         <i class="fa-solid fa-chart-line" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
+        @if(!isCollapsed) {
+          <span>Salarys</span>
+        }
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
