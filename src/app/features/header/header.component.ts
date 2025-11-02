@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {UserResponse} from '../logincomponent/logincomponent.component';
 import {AuthService} from '../../../core/services/auth.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -20,14 +21,12 @@ export class HeaderComponent implements OnInit {
   private authService = inject(AuthService);
 
   currentUser: UserResponse | null = {} as UserResponse;
+  private subscription: Subscription | undefined;
 
   ngOnInit() {
-    this.setCurrentUser();
-
-    // Lắng nghe sự thay đổi user từ AuthService
-    this.authService.userChanged.subscribe(() => {
-      this.setCurrentUser();
-    });
+    this.subscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    })
   }
 
   setCurrentUser() {

@@ -1,7 +1,7 @@
 import {Injectable, OnInit, signal, EventEmitter} from '@angular/core';
 import {LoginUser, UserResponse} from '../../app/features/logincomponent/logincomponent.component';
 import {HttpClient} from '@angular/common/http';
-import {catchError, map, Observable, of, tap} from 'rxjs';
+import {BehaviorSubject, catchError, map, Observable, of, tap} from 'rxjs';
 import {Student} from '../../app/features/services/student.service';
 
 export interface UserAccount {
@@ -19,11 +19,17 @@ export class AuthService {
 
   currentUser: UserResponse | null = {} as UserResponse;
 
-  // EventEmitter để thông báo khi user thay đổi
-  userChanged = new EventEmitter<void>();
+  private currentUserSubject: BehaviorSubject<UserResponse | null> = new BehaviorSubject(this.getUserFromStorage());
+
+  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
   }
+  private getUserFromStorage(): UserResponse | null {
+    const stored = localStorage.getItem('userG');
+    return stored ? JSON.parse(stored) : null;
+  }
+
 
   private setCurrentUser(userResponse: UserResponse | null) {
     if(userResponse) {
@@ -31,7 +37,7 @@ export class AuthService {
     } else {
       localStorage.removeItem('userG');
     }
-    this.userChanged.emit();  // ← Thông báo user đã thay đổi
+    this.currentUserSubject.next(userResponse);  // ← Thông báo user đã thay đổi
   }
 
   login(loginData: LoginUser): Observable<any> {
