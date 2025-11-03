@@ -121,12 +121,12 @@
       <a href="#" class="text-sm/6 font-semibold text-white">Company</a>
     </div>
     <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-      @if(currentUser()){
+      @if(currentUser){
         <div class="flex items-center gap-x-4">
           <i class="fa-solid fa-user text-2xl text-gray-200"></i>
           <div>
             <div class="font-semibold text-white">
-              {{currentUser()!.username}}
+              {{currentUser!.username}}
             </div>
           </div>
           <button (click)="logout()" class="rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-500 transition-colors">

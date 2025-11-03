@@ -19,7 +19,7 @@ export class HeaderComponent  {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  currentUser = this.authService.currentUser;
+  currentUser = this.authService.getUserFromStorage();
 
   toggleProductMenu(): void {
     this.isProductMenuOpen = !this.isProductMenuOpen;

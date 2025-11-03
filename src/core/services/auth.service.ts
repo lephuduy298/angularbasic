@@ -17,12 +17,10 @@ export class AuthService {
 
   private loginUrl = 'api/users';
 
-  currentUser = signal<UserResponse | null>(this.getUserFromStorage());
-
   constructor(private http: HttpClient) {
   }
 
-  private getUserFromStorage(): UserResponse | null {
+  getUserFromStorage(): UserResponse | null {
     const stored = localStorage.getItem('userG');
     return stored ? JSON.parse(stored) : null;
   }
@@ -33,7 +31,6 @@ export class AuthService {
     } else {
       localStorage.removeItem('userG');
     }
-    this.currentUser.set(userResponse);  // ← THIẾU DÒNG NÀY!
   }
 
   login(loginData: LoginUser): Observable<any> {
