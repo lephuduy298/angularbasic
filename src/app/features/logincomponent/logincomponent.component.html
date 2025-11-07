@@ -4,16 +4,16 @@
       <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Đăng nhập</h2>
       <form class="space-y-6" [formGroup]="formLogin" (ngSubmit)="onSubmit()">
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-900 mb-2">Username</label>
+          <label for="userName" class="block text-sm font-medium text-gray-900 mb-2">Username</label>
           <input
-            id="username"
+            id="userName"
             type="text"
-            name="username"
+            name="userName"
             placeholder="Nhập username"
-            formControlName="username"
+            formControlName="userName"
             class="w-full px-4 py-3 rounded-md border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all"
           />
-          @if (formLogin.get('username')?.invalid && formLogin.get('username')?.touched) {
+          @if (formLogin.get('userName')?.invalid && formLogin.get('userName')?.touched) {
             <div class="text-red-600 mt-1 text-sm">Tên đăng nhập không hợp lệ.</div>
           }
         </div>

@@ -1,7 +1,7 @@
-import {Component, OnInit, inject} from '@angular/core';
+import {Component, OnInit, inject, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import {UserResponse} from '../logincomponent/logincomponent.component';
+import {User} from '../../models/user.model';
 import {AuthService} from '../../../core/services/auth.service';
 import {Subscription} from 'rxjs';
 
@@ -12,7 +12,7 @@ import {Subscription} from 'rxjs';
   styleUrl: './header.component.scss',
   standalone: true
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   isProductMenuOpen = false;
   isMobileMenuOpen = false;
   isMobileProductMenuOpen = false;
@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  currentUser: UserResponse | null = {} as UserResponse;
+  currentUser: User | null = null;
   private subscription: Subscription | undefined;
 
   ngOnInit() {
@@ -29,9 +29,10 @@ export class HeaderComponent implements OnInit {
     })
   }
 
-  setCurrentUser() {
-    const stored = localStorage.getItem("userG");
-    this.currentUser = stored ? JSON.parse(stored) : null;
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   toggleProductMenu(): void {
@@ -52,7 +53,6 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.authService.logout();
-    this.setCurrentUser();  // ← Cập nhật lại currentUser ngay sau khi logout
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }

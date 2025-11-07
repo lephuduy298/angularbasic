@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import {AdminComponent} from './admin.component';
-import {HomecomponentComponent} from './homecomponent/homecomponent.component';
+import {UsersComponent} from './users/users.component';
 import {AuthGuard} from '../../../core/guard/auth.guard';
 
 export const adminRoutes: Routes = [
@@ -11,16 +11,12 @@ export const adminRoutes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'users',
         pathMatch: 'full',
       },
       {
-        path: 'home',
-        component: HomecomponentComponent,
-      },
-      {
-        path: 'orders',
-        component: HomecomponentComponent,
+        path: 'users',
+        component: UsersComponent,
       }
     ],
   }

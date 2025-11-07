@@ -3,16 +3,7 @@ import {NgClass} from '@angular/common';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
-
-export interface LoginUser {
-  username: string;
-  password: string;
-}
-
-export interface UserResponse{
-  username : string;
-  role: string;
-}
+import {LoginRequest} from '../../models/user.model';
 
 @Component({
   selector: 'app-logincomponent',
@@ -30,31 +21,36 @@ export class LogincomponentComponent implements OnInit {
   }
 
   showPassword: boolean = false;
-
   formLogin!: FormGroup;
+  errorMessage: string = '';
 
   ngOnInit(): void {
     this.formLogin = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      userName: new FormControl('', [Validators.required, Validators.minLength(3)]),
       password: new FormControl('', [Validators.required]),
     });
   }
 
   onSubmit() {
-    this.authService.login(this.formLogin.value).subscribe(res => {
-      if (res.success) {
-        console.log('Đăng nhập thành công', res.data);
-        if(res.data.role == 'admin'){
-          this.router.navigate(['admin']);
-        }
-        else {
-          this.router.navigate(['home']);
-        }
+    if (this.formLogin.invalid) {
+      return;
+    }
 
+    const loginData: LoginRequest = this.formLogin.value;
+
+    this.authService.login(loginData).subscribe(res => {
+      if (res.success && res.data) {
+        console.log('Đăng nhập thành công', res.data);
+        // Check role if it exists, otherwise navigate to admin by default
+        if(res.data.role && res.data.role === 'admin'){
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/home']);
+        }
       } else {
-        console.log('Username hoặc mật khẩu không đúng');
+        this.errorMessage = res.message || 'Username hoặc mật khẩu không đúng';
+        console.log(this.errorMessage);
       }
     });
-    console.log(this.formLogin.value);
   }
 }

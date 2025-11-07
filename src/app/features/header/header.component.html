@@ -124,9 +124,12 @@
       @if(currentUser){
         <div class="flex items-center gap-x-4">
           <i class="fa-solid fa-user text-2xl text-gray-200"></i>
-          <div>
+          <div class="text-right">
             <div class="font-semibold text-white">
-              {{currentUser!.username}}
+              {{currentUser!.fullName}}
+            </div>
+            <div class="text-xs text-gray-400">
+              {{currentUser!.email}}
             </div>
           </div>
           <button (click)="logout()" class="rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-500 transition-colors">

@@ -1,59 +1,59 @@
-import {Injectable, OnInit, signal, EventEmitter} from '@angular/core';
-import {LoginUser, UserResponse} from '../../app/features/logincomponent/logincomponent.component';
-import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, catchError, map, Observable, of, tap} from 'rxjs';
-import {Student} from '../../app/features/services/student.service';
-
-export interface UserAccount {
-  username: string
-  password: string
-  role: string
-}
+import {User, LoginRequest, LoginResponse} from '../../app/models/user.model';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private loginUrl = 'api/users';
+  private apiUrl = `${environment.apiUrl}/api/v1`;
 
-  currentUser: UserResponse | null = {} as UserResponse;
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
 
-  private currentUserSubject: BehaviorSubject<UserResponse | null> = new BehaviorSubject(this.getUserFromStorage());
+  private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject(this.getUserFromStorage());
 
   currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
   }
-  private getUserFromStorage(): UserResponse | null {
-    const stored = localStorage.getItem('userG');
+
+  private getUserFromStorage(): User | null {
+    const stored = localStorage.getItem('currentUser');
     return stored ? JSON.parse(stored) : null;
   }
 
-
-  private setCurrentUser(userResponse: UserResponse | null) {
-    if(userResponse) {
-      localStorage.setItem('userG', JSON.stringify(userResponse));
+  private setCurrentUser(user: User | null) {
+    if(user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
     } else {
-      localStorage.removeItem('userG');
+      localStorage.removeItem('currentUser');
     }
-    this.currentUserSubject.next(userResponse);  // ← Thông báo user đã thay đổi
+    this.currentUserSubject.next(user);
   }
 
-  login(loginData: LoginUser): Observable<any> {
-    return this.http.get<UserAccount[]>(this.loginUrl)
+  // Login with backend API
+  login(loginData: LoginRequest): Observable<LoginResponse> {
+    const url = `${this.apiUrl}/user/login`;
+    return this.http.post<LoginResponse>(url, loginData, this.httpOptions)
       .pipe(
-        map(users => {
-          const user = users.find(u => u.username === loginData.username && u.password === loginData.password);
-          if (user) {
-            const userResponse = {username: user.username, role: user.role} as UserResponse;
-            this.setCurrentUser(userResponse);  // ← Cập nhật user sau khi login thành công
-            return {success: true, data: userResponse};          } else {
-            return {success: false};
+        tap(response => {
+          if (response.success && response.data) {
+            this.setCurrentUser(response.data);
+            if (response.token) {
+              localStorage.setItem('authToken', response.token);
+            }
+            console.log('Đăng nhập thành công');
           }
         }),
-        tap(_ => console.log('Đăng nhập12345')),
-        catchError(this.handleError<LoginUser>('Login'))
+        catchError(error => {
+          console.error('Đăng nhập thất bại:', error);
+          return of({success: false, message: 'Đăng nhập thất bại'} as LoginResponse);
+        })
       );
   }
 
@@ -61,9 +61,17 @@ export class AuthService {
     this.setCurrentUser(null);
   }
 
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  isLoggedIn(): boolean {
+    return this.currentUserSubject.value !== null;
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(`${operation} th¿t b¿i: ${error.message}`);
+      console.error(`${operation} thất bại: ${error.message}`);
       return of(result as T);
     };
   }

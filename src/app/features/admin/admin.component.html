@@ -16,53 +16,13 @@
 
     <!-- Navigation -->
     <nav class="p-4 space-y-2">
-      <a routerLink="/admin/home"
+      <a routerLink="/admin/users"
          routerLinkActive="bg-gray-700"
-         [title]="isCollapsed ? 'Home' : ''"
-         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
-         <i class="fa-solid fa-house" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
-        @if(!isCollapsed) {
-          <span>Home</span>
-        }
-      </a>
-
-      <a routerLink="/admin/products"
-         routerLinkActive="bg-gray-700"
-         [title]="isCollapsed ? 'Products' : ''"
-         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
-         <i class="fa-solid fa-box" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
-        @if(!isCollapsed) {
-          <span>Orders</span>
-        }
-      </a>
-
-      <a routerLink="/admin/orders"
-         routerLinkActive="bg-gray-700"
-         [title]="isCollapsed ? 'Orders' : ''"
-         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
-         <i class="fa-solid fa-cart-shopping" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
-        @if(!isCollapsed) {
-          <span>Products</span>
-        }
-      </a>
-
-      <a routerLink="/admin/customers"
-         routerLinkActive="bg-gray-700"
-         [title]="isCollapsed ? 'Customers' : ''"
+         [title]="isCollapsed ? 'Quản lý Users' : ''"
          class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
          <i class="fa-solid fa-users" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
         @if(!isCollapsed) {
-          <span>Teams</span>
-        }
-      </a>
-
-      <a routerLink="/admin/reports"
-         routerLinkActive="bg-gray-700"
-         [title]="isCollapsed ? 'Reports' : ''"
-         class="flex items-center px-2 py-2 rounded hover:bg-gray-700 transition">
-         <i class="fa-solid fa-chart-line" [ngClass]="isCollapsed ? '' : 'mr-2'"></i>
-        @if(!isCollapsed) {
-          <span>Salarys</span>
+          <span>Quản lý Users</span>
         }
       </a>
     </nav>

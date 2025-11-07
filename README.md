@@ -1,59 +1,117 @@
-# AppointmentApp
+# User Management System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+Ứng dụng quản lý Users với Angular và RESTful API Backend.
 
-## Development server
+## 🎯 Tính năng chính
 
-To start a local development server, run:
+- ✅ **Authentication & Authorization**: Login với JWT token
+- ✅ **User Management**: CRUD đầy đủ cho users
+- ✅ **RESTful API**: Kết nối với backend qua HTTP
+- ✅ **Responsive UI**: Giao diện đẹp với Tailwind CSS
+
+## 🚀 Quick Start
+
+### Cài đặt
+
+```bash
+npm install
+```
+
+### Cấu hình Backend URL
+
+Sửa file `src/environments/environment.ts`:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080' // URL backend của bạn
+};
+```
+
+### Chạy ứng dụng
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Truy cập: `http://localhost:4200/`
 
-## Code scaffolding
+## 📊 User Model
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```json
+{
+  "userName": "buiquangh",
+  "fullName": "Bùi Quang H",
+  "email": "buiquangh@example.com",
+  "age": 25,
+  "dateOfBirth": "1998-04-05",
+  "phoneNumber": "0886677889",
+  "role": "admin"
+}
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📋 API Endpoints
 
+Backend cần implement các endpoints sau:
+
+- `POST /api/v1/user/login` - Đăng nhập
+- `GET /api/v1/user` - Lấy danh sách users
+- `GET /api/v1/user/{userName}` - Lấy user theo username
+- `POST /api/v1/user` - Tạo user mới
+- `PUT /api/v1/user/{userName}` - Cập nhật user
+- `DELETE /api/v1/user/{userName}` - Xóa user
+
+## 🎨 Routes
+
+- `/` → Redirect to `/home`
+- `/home` - Public homepage
+- `/login` - Login page
+- `/admin` - Admin panel (requires authentication)
+  - `/admin/users` - User management (CRUD)
+
+## 🔧 Tech Stack
+
+- **Angular 19** - Frontend framework
+- **Tailwind CSS** - Styling
+- **RxJS** - Reactive programming
+- **TypeScript** - Type safety
+- **RESTful API** - Backend communication
+
+## 📚 Documentation
+
+- [USER_MANAGEMENT_README.md](./USER_MANAGEMENT_README.md) - Chi tiết về User Management
+- [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) - API Documentation đầy đủ
+- [BACKEND_INTEGRATION_GUIDE.md](./BACKEND_INTEGRATION_GUIDE.md) - Hướng dẫn tích hợp backend
+
+## 🛠️ Build & Deploy
+
+### Build for production
 ```bash
-ng generate --help
+ng build --configuration production
 ```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
+### Run tests
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## 📝 Lưu ý
 
-For end-to-end (e2e) testing, run:
+- **Chỉ quản lý User** - Không có Student hoặc model khác
+- **Backend URL mặc định**: `http://localhost:8080`
+- **JWT Token**: Tự động gửi trong header nếu có
+- **No frontend security**: Backend tự do implement security
 
-```bash
-ng e2e
-```
+## 🐛 Troubleshooting
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### CORS Error
+Đảm bảo backend enable CORS cho `http://localhost:4200`
 
-## Additional Resources
+### Connection Refused
+Kiểm tra backend đang chạy trên port 8080
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Chi tiết troubleshooting: [USER_MANAGEMENT_README.md](./USER_MANAGEMENT_README.md)
+
+## 📄 License
+
+Educational purposes only.
