@@ -1,102 +1,247 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { PageEvent } from '@angular/material/paginator';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { UserService } from '../../services/user.service';
 import { User } from '../../../models/user.model';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { HeaderComponent } from '../../header/header.component';
+import {SearchModalComponent} from '../../../shared/modal/search-modal/search-modal.component';
+import {SelectModalComponent, SelectOption} from '../../../shared/modal/select-modal/select-modal.component';
+import {CompanyprofileService} from '../../services/companyprofile.service';
+import {LookupService} from '../../services/lookup.service';
+import {DepartmentService} from '../../services/department.service';
 
 @Component({
   selector: 'app-users',
-  standalone: true,
-  imports: [CommonModule, FormsModule, NgxPaginationModule, HeaderComponent],
+  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, SearchModalComponent, SelectModalComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
-export class UsersComponent implements OnInit {
-  users: User[] = [];
-  isUpdateForm = false;
-  isAddingUser = false;
-  selectedUser: User = {} as User;
-  p: string | number | undefined;
-  searchKeyword: string = '';
+export class UsersComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = [
+    'stt',
+    'userName',
+    'departmentName',
+    'roleName',
+    'fullName',
+    'birthDate',
+    'email',
+    'companyName',
+    'detail',
+    'statusFlag',
+    'createdDate',
+    'createdBy',
+    'updatedDate',
+    'updatedBy',
+  ];
+  dataSource = new MatTableDataSource<User>([]);
 
-  constructor(private userService: UserService) {}
+  // Filter options
+  departmentOptions: SelectOption[] = [];
+  roleOptions: SelectOption[] = [];
+  companyOptions: SelectOption[] = [];
+  statusOptions: SelectOption[] = [];
 
-  ngOnInit(): void {
-    this.getAllUsers();
+  // Current filter values
+  filters = {
+    keyword: '',
+    departmentId: [] as number[],
+    statusFlg: [] as number[],
+    positionCd:[] as number[],
+    companyId:[] as number[],
+    page: 0,
+    limit: 12
+  };
+
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(
+    private _liveAnnouncer: LiveAnnouncer,
+    private userService: UserService,
+    private companyProfileService: CompanyprofileService,
+    private departmentService: DepartmentService,
+    private lookupService: LookupService,
+
+  ) {}
+
+  ngOnInit() {
+    this.loadUsers();
+    this.loadCompanyProfile();
+    this.loadDepartment();
+    this.loadLookupPosition();
+    this.loadLookupStatus();
   }
 
-  getAllUsers(): void {
-    this.userService.getUsers().subscribe(users => {
-      this.users = users;
-      console.log('Users loaded:', users);
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+
+  loadUsers() {
+    this.userService.getUsersWithFilter(this.filters).subscribe({
+      next: (response: any) => {
+        this.dataSource.data = response.items || response.data || [];
+        console.log('Đã tải danh sách users:', response);
+      },
+      error: (error) => {
+        console.error('Lỗi khi tải users:', error);
+      }
     });
   }
 
-  addUser(user: User): void {
-    this.userService.addUser(user).subscribe(newUser => {
-      this.users.push(newUser);
-      this.closeUpdateForm();
-      this.getAllUsers();
-    });
+  loadCompanyProfile() {
+    this.companyProfileService.getAllCompanyProfiles().subscribe({
+      next: (companies: any) => {
+        // Map companies to SelectOption format { value, label }
+        this.companyOptions =companies.data.map((c: any) => ({
+          value: c.id,
+          label: c.companyName ?? 'Unknown'
+        }));
+
+        // Add "All" option at the beginning
+        this.companyOptions.unshift({ value: 'all', label: 'Tất cả công ty' });
+
+        console.log('Companies loaded:', this.companyOptions);
+      },
+      error: (error: any) => {
+        console.error('Error loading companies:', error);
+      }
+    })
   }
 
-  showUserForm(user?: User): void {
-    if (user) {
-      this.selectedUser = { ...user };
-      this.isUpdateForm = true;
+  loadDepartment() {
+    this.departmentService.getAllDepartments().subscribe({
+      next: (departments: any) => {
+        // Map departments to SelectOption format { value, label }
+        this.departmentOptions = (departments.data || []).map((d: any) => ({
+          value: d.id ?? d.departmentId,
+          label: d.departmentName ?? 'Unknown'
+        }));
+
+        // Add "All" option at the beginning
+        this.departmentOptions.unshift({ value: 'all', label: 'Tất cả đơn vị' });
+
+        console.log('Departments loaded:', this.departmentOptions);
+      },
+      error: (error: any) => {
+        console.error('Error loading departments:', error);
+      }
+    })
+  }
+
+  loadLookupPosition() {
+    this.lookupService.getByLookupType('POSITION').subscribe({
+      next: (positions: any) => {
+        // Map positions to SelectOption format { value, label }
+        console.log(">>>>>>: {}", positions);
+        console.log(">>>>>>: {}", positions.data);
+        this.roleOptions = positions.data.map((p: any) => ({
+          value: p.lookupCd,
+          label: p.lookupValue ?? 'Unknown'
+        }));
+
+        // Add "All" option at the beginning
+        this.roleOptions.unshift({ value: 'all', label: 'Tất cả vai trò' });
+
+        console.log('Positions loaded:', this.roleOptions);
+      },
+      error: (error: any) => {
+        console.error('Error loading positions:', error);
+      }
+    })
+  }
+
+  loadLookupStatus() {
+    this.lookupService.getByLookupType('STATUS').subscribe({
+      next: (statuses: any) => {
+        // Map statuses to SelectOption format { value, label }
+        this.statusOptions = statuses.data.map((s: any) => ({
+          value: s.lookupCd,
+          label: s.lookupValue ?? 'Unknown'
+        }));
+
+        // Add "All" option at the beginning
+        this.statusOptions.unshift({ value: 'all', label: 'Tất cả trạng thái' });
+
+        console.log('Statuses loaded:', this.statusOptions);
+      },
+      error: (error: any) => {
+        console.error('Error loading statuses:', error);
+      }
+    })
+  }
+
+  onSearch(searchTerm: string) {
+    this.filters.keyword = searchTerm;
+    this.filters.page = 0; // Reset to first page when searching
+    this.loadUsers();
+  }
+
+  onDepartmentChange(values: any) {
+    // Handle multiple selection - send array to backend
+    if (Array.isArray(values) && values.length > 0) {
+      // If 'all' is selected, send empty array
+    this.filters.page = 1;
     } else {
-      this.selectedUser = {} as User;
-      this.isAddingUser = true;
+      this.filters.departmentId = [];
+    }
+    this.filters.page = 0;
+    this.loadUsers();
+  }
+
+  onRoleChange(values: any) {
+    // Handle multiple selection - send array to backend
+    if (Array.isArray(values) && values.length > 0) {
+      // If 'all' is selected, send empty array
+    this.filters.page = 1;
+    } else {
+      this.filters.positionCd = [];
+    }
+    this.filters.page = 0;
+    this.loadUsers();
+  }
+
+  onCompanyChange(values: any) {
+    // Handle multiple selection - send array to backend
+    if (Array.isArray(values) && values.length > 0) {
+      // If 'all' is selected, send empty array
+    this.filters.page = 1;
+    } else {
+      this.filters.companyId = [];
+    }
+    this.filters.page = 0;
+    this.loadUsers();
+  }
+
+  onStatusChange(values: any) {
+    // Handle multiple selection - send array to backend
+    if (Array.isArray(values) && values.length > 0) {
+      // If 'all' is selected, send empty array
+      this.filters.statusFlg = values.includes('all') ? [] : values;
+    } else {
+      this.filters.page = 1;
+      this.loadUsers();
     }
   }
 
-  updateUser(user: User): void {
-    this.userService.updateUser(user.userName, user).subscribe(() => {
-      this.getAllUsers();
-      this.closeUpdateForm();
-    });
-  }
-
-  deleteUser(user: User): void {
-    if (confirm(`Bạn có chắc chắn muốn xóa user ${user.userName}?`)) {
-      this.userService.deleteUser(user.userName).subscribe(() => {
-        this.getAllUsers();
-      });
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
     }
   }
 
-  closeUpdateForm(): void {
-    this.isUpdateForm = false;
-    this.isAddingUser = false;
-    this.selectedUser = {} as User;
-  }
+  formatDate(date: Date | string | undefined): string {
+    if (!date) return '';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
 
-  onSearch(): void {
-    // Filtering is done in the getter
-  }
-
-  get filteredUsers(): User[] {
-    if (!this.searchKeyword || this.searchKeyword.trim() === '') {
-      return this.users;
-    }
-
-    const searchTerm = this.searchKeyword.toLowerCase().trim();
-    return this.users.filter(user =>
-      user.userName.toLowerCase().includes(searchTerm) ||
-      user.fullName.toLowerCase().includes(searchTerm) ||
-      user.email.toLowerCase().includes(searchTerm) ||
-      user.phoneNumber.includes(searchTerm)
-    );
-  }
-
-  saveUser(): void {
-    if (this.isAddingUser) {
-      this.addUser(this.selectedUser);
-    } else if (this.isUpdateForm) {
-      this.updateUser(this.selectedUser);
-    }
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 }
-

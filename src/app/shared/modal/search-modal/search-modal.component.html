@@ -1,0 +1,25 @@
+<div class="flex items-center" [style.width]="width">
+  <mat-form-field appearance="outline" class="w-full text-sm search-field-custom">
+    <mat-icon matPrefix class="text-gray-600 mr-2">search</mat-icon>
+    <input
+      matInput
+      [formControl]="searchControl"
+      [placeholder]="placeholder"
+      type="text"
+      autocomplete="off"
+      class="text-sm"
+    />
+    <button
+      *ngIf="searchControl.value"
+      mat-icon-button
+      matSuffix
+      (click)="clearSearch()"
+      aria-label="Clear search"
+      type="button"
+      class="hover:bg-gray-100 rounded-full transition-colors"
+    >
+      <mat-icon class="text-gray-600">close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+

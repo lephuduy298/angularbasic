@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { User } from '../../models/user.model';
 import { environment } from '../../../environments/environment';
@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = `${environment.apiUrl}/api/v1/users`;
+  private apiUrl = `${environment.apiUrl}/user-service/api/v1/users`;
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -24,6 +24,40 @@ export class UserService {
         catchError(this.handleError<User[]>('getUsers', []))
       );
   }
+
+  // Lấy users với filter từ backend
+  getUsersWithFilter(params: {
+    keyword?: string;
+    departmentId?: number[];
+    positionCd?: number[];
+    companyId?: number[];
+    statusFlg?: number[];
+    page?: number;
+    limit?: number;
+  }): Observable<any> {
+
+    const httpParams = new HttpParams({ fromObject: {
+        keyword: params.keyword || '',
+        departmentId: params.departmentId?.join(',') || '',
+        positionCd: params.positionCd?.join(',') || '',
+        companyId: params.companyId?.join(',') || '',
+        statusFlg: params.statusFlg?.join(',') || '',
+        page: (params.page ?? 1).toString(),
+        limit: (params.limit ?? 12).toString(),
+      }});
+
+
+
+    const url = `${this.apiUrl}`;
+    console.log('Request URL:', url + '?' + httpParams.toString());
+
+    return this.http.get<any>(url, { params: httpParams })
+      .pipe(
+        tap(_ => console.log('Đã lấy danh sách users với filter')),
+        catchError(this.handleError<any>('getUsersWithFilter', { items: [], total: 0 }))
+      );
+  }
+
 
   // Lấy user theo username
   getUserByUsername(username: string): Observable<User> {

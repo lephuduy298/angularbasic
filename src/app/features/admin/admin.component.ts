@@ -10,10 +10,5 @@ import { CommonModule } from '@angular/common';
   styleUrl: './admin.component.scss'
 })
 export class AdminComponent {
-  isCollapsed = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
 }
 

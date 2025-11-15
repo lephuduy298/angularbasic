@@ -1,23 +1,24 @@
 export interface User {
-  id: string;
+  id?: string;
   userName: string;
-  fullName: string;
-  email: string;
-  age: number;
-  dateOfBirth: string; // ISO date string (YYYY-MM-DD)
-  phoneNumber: string;
-  role?: string; // Optional role field for admin/user distinction
-}
-
-export interface LoginRequest {
-  userName: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  success: boolean;
-  data?: User;
-  message?: string;
-  token?: string; // Optional JWT token
+  email?: string;
+  fullName?: string;
+  birthDate?: Date | string;
+  statusFlag?: string;
+  departmentName?: string;
+  positionTitle?: string;
+  companyName?: string;
+  stockCode?: string;
+  stockExchange?: string;
+  createdDate?: Date | string;
+  createdBy?: string;
+  lastUpdatedDate?: Date | string;
+  lastUpdatedBy?: string;
+  // Additional fields for UI
+  isSpecialized?: boolean;
+  roleName?: string;
+  phoneNumber?: string;
+  address?: string;
+  isActive?: boolean;
 }
 
