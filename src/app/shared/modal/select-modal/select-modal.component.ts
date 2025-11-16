@@ -28,7 +28,8 @@ export class SelectModalComponent implements OnInit {
   selectControl = new FormControl();
 
   ngOnInit() {
-    if (this.initialValue) {
+    if (this.initialValue !== null && this.initialValue !== undefined) {
+      console.log("Setting initial value:", this.initialValue);
       this.selectControl.setValue(this.initialValue);
     }
 

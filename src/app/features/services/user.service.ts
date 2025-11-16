@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { catchError, Observable, of, tap } from 'rxjs';
-import { User } from '../../models/user.model';
+import { UserResponse, CreateUserRequest } from '../../models/user.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -17,11 +17,11 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   // Lấy tất cả users
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl)
+  getUsers(): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(this.apiUrl)
       .pipe(
         tap(_ => console.log('Đã lấy danh sách users')),
-        catchError(this.handleError<User[]>('getUsers', []))
+        catchError(this.handleError<UserResponse[]>('getUsers', []))
       );
   }
 
@@ -58,33 +58,44 @@ export class UserService {
       );
   }
 
+  // Tạo user mới với CreateUserRequest
+  createUser(user: CreateUserRequest): Observable<any> {
+    return this.http.post<any>(this.apiUrl, user, this.httpOptions)
+      .pipe(
+        tap((newUser: any) => console.log(`Đã tạo user mới:`, newUser)),
+        catchError(this.handleError<any>('createUser'))
+      );
+  }
+
 
   // Lấy user theo username
-  getUserByUsername(username: string): Observable<User> {
+  getUserByUsername(username: string): Observable<UserResponse> {
     const url = `${this.apiUrl}/${username}`;
-    return this.http.get<User>(url)
+    return this.http.get<UserResponse>(url)
       .pipe(
         tap(_ => console.log(`Đã lấy user username=${username}`)),
-        catchError(this.handleError<User>(`getUserByUsername username=${username}`))
+        catchError(this.handleError<UserResponse>(`getUserByUsername username=${username}`))
       );
   }
 
   // Thêm user mới
-  addUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user, this.httpOptions)
+  addUser(user: UserResponse): Observable<UserResponse> {
+    return this.http.post<UserResponse>(this.apiUrl, user, this.httpOptions)
       .pipe(
-        tap((newUser: User) => console.log(`Đã thêm user username=${newUser.userName}`)),
-        catchError(this.handleError<User>('addUser'))
+        tap((newUser: UserResponse) => console.log(`Đã thêm user username=${newUser}`)),
+        catchError(this.handleError<UserResponse>('addUser'))
       );
   }
 
   // Cập nhật user
-  updateUser(username: string, user: User): Observable<User> {
-    const url = `${this.apiUrl}/${user.id}`;
-    return this.http.put<User>(url, user, this.httpOptions)
+  updateUser(id: string, user: any): Observable<any> {
+    console.log('Updating user:', id);
+    console.log('User updated successfully:', user);
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<any>(url, user, this.httpOptions)
       .pipe(
-        tap(_ => console.log(`Đã cập nhật user username=${username}`)),
-        catchError(this.handleError<User>('updateUser'))
+        tap(_ => console.log(`Đã cập nhật user id=${id}`)),
+        catchError(this.handleError<any>('updateUser'))
       );
   }
 

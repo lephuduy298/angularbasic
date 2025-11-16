@@ -1,0 +1,353 @@
+<form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+  <div class="space-y-12">
+    <div class="border-b border-white/10 pb-12">
+      <h2 class="text-base/7 font-semibold text-white">Cập nhật người dùng</h2>
+      <p class="mt-1 text-sm/6 text-gray-400">Chỉnh sửa thông tin tài khoản người dùng</p>
+
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <!-- Username -->
+        <div class="sm:col-span-3">
+          <label for="userName" class="block text-sm/6 font-medium text-white">Tên đăng nhập <span class="text-red-500">*</span></label>
+          <div class="mt-2">
+            <input
+              id="userName"
+              type="text"
+              formControlName="userName"
+              [class.border-red-500]="hasError('userName')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('userName')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('userName') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="sm:col-span-3">
+          <label for="email" class="block text-sm/6 font-medium text-white">Email <span class="text-red-500">*</span></label>
+          <div class="mt-2">
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              [class.border-red-500]="hasError('email')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('email')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('email') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="sm:col-span-3">
+          <label for="password" class="block text-sm/6 font-medium text-white">Mật khẩu mới (để trống nếu không đổi)</label>
+          <div class="mt-2">
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              [class.border-red-500]="hasError('password')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('password')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('password') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Full Name -->
+        <div class="sm:col-span-3">
+          <label for="fullName" class="block text-sm/6 font-medium text-white">Họ và tên <span class="text-red-500">*</span></label>
+          <div class="mt-2">
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              [class.border-red-500]="hasError('fullName')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('fullName')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('fullName') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Department ID -->
+        <div class="sm:col-span-3">
+          <label for="departmentId" class="block text-sm/6 font-medium text-white">Đơn vị <span class="text-red-500">*</span></label>
+          <div class="mt-2">
+            <app-select-modal
+              [options]="departmentOptions"
+              [placeholder]="'Chọn đơn vị'"
+              [multiple]="false"
+              [initialValue]="userData?.departmentId ? +userData.departmentId : null"
+              (selectionChange)="onDepartmentChange($event)"
+            ></app-select-modal>
+            <p *ngIf="hasError('departmentId')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('departmentId') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Company Profile ID -->
+        <div class="sm:col-span-3">
+          <label for="companyProfileId" class="block text-sm/6 font-medium text-white">Công ty <span class="text-red-500">*</span></label>
+          <div class="mt-2">
+            <app-select-modal
+              [options]="companyOptions"
+              [placeholder]="'Chọn công ty'"
+              [multiple]="false"
+              [initialValue]="userData?.companyProfileId ? +userData.companyProfileId : null"
+              (selectionChange)="onCompanyChange($event)"
+            ></app-select-modal>
+            <p *ngIf="hasError('companyProfileId')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('companyProfileId') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-span-full">
+          <label for="description" class="block text-sm/6 font-medium text-white">Mô tả</label>
+          <div class="mt-2">
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              [class.border-red-500]="hasError('description')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            ></textarea>
+            <p *ngIf="hasError('description')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('description') }}
+            </p>
+            <p class="mt-3 text-sm/6 text-gray-400">Mô tả ngắn gọn về người dùng (tùy chọn)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Information Section -->
+    <div class="border-b border-white/10 pb-12">
+      <h2 class="text-base/7 font-semibold text-white">Thông tin cá nhân</h2>
+      <p class="mt-1 text-sm/6 text-gray-400">Thông tin chi tiết về người dùng</p>
+
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <!-- Birth Date -->
+        <div class="sm:col-span-3">
+          <label for="birthDate" class="block text-sm/6 font-medium text-white">Ngày sinh</label>
+          <div class="mt-2">
+            <input
+              id="birthDate"
+              type="date"
+              formControlName="birthDate"
+              [class.border-red-500]="hasError('birthDate')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('birthDate')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('birthDate') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="sm:col-span-3">
+          <label for="genderCd" class="block text-sm/6 font-medium text-white">Giới tính</label>
+          <div class="mt-2 grid grid-cols-1">
+            <select
+              id="genderCd"
+              formControlName="genderCd"
+              [class.border-red-500]="hasError('genderCd')"
+              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-1.5 pr-8 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            >
+              <option [ngValue]="null">Chọn giới tính</option>
+              <option [ngValue]="1">Nam</option>
+              <option [ngValue]="2">Nữ</option>
+              <option [ngValue]="3">Khác</option>
+            </select>
+            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-400 sm:size-4">
+              <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+            </svg>
+          </div>
+          <p *ngIf="hasError('genderCd')" class="mt-2 text-sm text-red-500">
+            {{ getErrorMessage('genderCd') }}
+          </p>
+        </div>
+
+        <!-- Address -->
+        <div class="col-span-full">
+          <label for="address" class="block text-sm/6 font-medium text-white">Địa chỉ</label>
+          <div class="mt-2">
+            <input
+              id="address"
+              type="text"
+              formControlName="address"
+              [class.border-red-500]="hasError('address')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('address')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('address') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="sm:col-span-3">
+          <label for="phoneNo" class="block text-sm/6 font-medium text-white">Số điện thoại</label>
+          <div class="mt-2">
+            <input
+              id="phoneNo"
+              type="tel"
+              formControlName="phoneNo"
+              placeholder="0123456789"
+              [class.border-red-500]="hasError('phoneNo')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('phoneNo')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('phoneNo') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Fax Number -->
+        <div class="sm:col-span-3">
+          <label for="faxNo" class="block text-sm/6 font-medium text-white">Số fax</label>
+          <div class="mt-2">
+            <input
+              id="faxNo"
+              type="tel"
+              formControlName="faxNo"
+              [class.border-red-500]="hasError('faxNo')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('faxNo')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('faxNo') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Identity Number -->
+        <div class="sm:col-span-3">
+          <label for="identity" class="block text-sm/6 font-medium text-white">Số CMND/CCCD</label>
+          <div class="mt-2">
+            <input
+              id="identity"
+              type="text"
+              formControlName="identity"
+              placeholder="123456789012"
+              [class.border-red-500]="hasError('identity')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('identity')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('identity') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Identity Type -->
+        <div class="sm:col-span-3">
+          <label for="identityTypeCd" class="block text-sm/6 font-medium text-white">Loại giấy tờ</label>
+          <div class="mt-2 grid grid-cols-1">
+            <select
+              id="identityTypeCd"
+              formControlName="identityTypeCd"
+              [class.border-red-500]="hasError('identityTypeCd')"
+              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-1.5 pr-8 pl-3 text-base text-white outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            >
+              <option [ngValue]="null">Chọn loại</option>
+              <option [ngValue]="1">CMND</option>
+              <option [ngValue]="2">CCCD</option>
+              <option [ngValue]="3">Hộ chiếu</option>
+            </select>
+            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-400 sm:size-4">
+              <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+            </svg>
+          </div>
+          <p *ngIf="hasError('identityTypeCd')" class="mt-2 text-sm text-red-500">
+            {{ getErrorMessage('identityTypeCd') }}
+          </p>
+        </div>
+
+        <!-- Identity Issued Date -->
+        <div class="sm:col-span-3">
+          <label for="identityIssuedDate" class="block text-sm/6 font-medium text-white">Ngày cấp</label>
+          <div class="mt-2">
+            <input
+              id="identityIssuedDate"
+              type="date"
+              formControlName="identityIssuedDate"
+              [class.border-red-500]="hasError('identityIssuedDate')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('identityIssuedDate')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('identityIssuedDate') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Identity Issued Place -->
+        <div class="sm:col-span-3">
+          <label for="identityIssuedPlace" class="block text-sm/6 font-medium text-white">Nơi cấp</label>
+          <div class="mt-2">
+            <input
+              id="identityIssuedPlace"
+              type="text"
+              formControlName="identityIssuedPlace"
+              [class.border-red-500]="hasError('identityIssuedPlace')"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+            <p *ngIf="hasError('identityIssuedPlace')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('identityIssuedPlace') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Position -->
+        <div class="sm:col-span-3">
+          <label for="positionCd" class="block text-sm/6 font-medium text-white">Chức vụ</label>
+          <div class="mt-2">
+            <app-select-modal
+              [options]="roleOptions"
+              [placeholder]="'Chọn chức vụ'"
+              [multiple]="false"
+              [initialValue]="userData?.positionCd ? +userData.positionCd : null"
+              (selectionChange)="onRoleChange($event)"
+            ></app-select-modal>
+            <p *ngIf="hasError('positionCd')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('positionCd') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="sm:col-span-3">
+          <label for="statusFlg" class="block text-sm/6 font-medium text-white">Trạng thái</label>
+          <div class="mt-2">
+            <app-select-modal
+              [options]="statusOptions"
+              [placeholder]="'Chọn trạng thái'"
+              [multiple]="false"
+              [initialValue]="userData?.statusFlg != null ? +userData.statusFlg : null"
+              (selectionChange)="onStatusChange($event)"
+            ></app-select-modal>
+            <p *ngIf="hasError('statusFlg')" class="mt-2 text-sm text-red-500">
+              {{ getErrorMessage('statusFlg') }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex items-center justify-end gap-x-6">
+    <button type="button" (click)="handleCancel()" class="text-sm/6 font-semibold text-white hover:text-gray-300">Hủy</button>
+    <button
+      type="submit"
+      [disabled]="userForm.invalid"
+      [class.opacity-50]="userForm.invalid"
+      [class.cursor-not-allowed]="userForm.invalid"
+      class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+      Cập nhật
+    </button>
+  </div>
+</form>

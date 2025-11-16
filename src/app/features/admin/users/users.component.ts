@@ -4,19 +4,23 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PageEvent } from '@angular/material/paginator';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { UserService } from '../../services/user.service';
-import { User } from '../../../models/user.model';
+import { UserResponse, CreateUserRequest, UpdateUserRequest } from '../../../models/user.model';
 import {SearchModalComponent} from '../../../shared/modal/search-modal/search-modal.component';
 import {SelectModalComponent, SelectOption} from '../../../shared/modal/select-modal/select-modal.component';
+import {PaginationModalComponent} from '../../../shared/modal/pagination-modal/pagination-modal.component';
+import { PageEvent } from '@angular/material/paginator';
 import {CompanyprofileService} from '../../services/companyprofile.service';
 import {LookupService} from '../../services/lookup.service';
 import {DepartmentService} from '../../services/department.service';
+import {FormCreateUserModalComponent} from '../../../shared/modal/form-create-user-modal/form-create-user-modal.component';
+import {FormUpdateUserModalComponent} from '../../../shared/modal/form-update-user-modal/form-update-user-modal.component';
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, SearchModalComponent, SelectModalComponent],
+  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatDialogModule, SearchModalComponent, SelectModalComponent, PaginationModalComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -35,9 +39,15 @@ export class UsersComponent implements OnInit, AfterViewInit {
     'createdDate',
     'createdBy',
     'updatedDate',
-    'updatedBy',
+    'updatedBy'
   ];
-  dataSource = new MatTableDataSource<User>([]);
+  dataSource = new MatTableDataSource<UserResponse>([]);
+
+  // Pagination
+  totalItems: number = 0;
+  pageSize: number = 10;
+  pageIndex: number = 0;
+  pageSizeOptions: number[] = [5, 10, 15, 20, 25, 50];
 
   // Filter options
   departmentOptions: SelectOption[] = [];
@@ -50,10 +60,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     keyword: '',
     departmentId: [] as number[],
     statusFlg: [] as number[],
-    positionCd:[] as number[],
-    companyId:[] as number[],
-    page: 0,
-    limit: 12
+    positionCd: [] as number[],
+    companyId: [] as number[]
   };
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -64,7 +72,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private companyProfileService: CompanyprofileService,
     private departmentService: DepartmentService,
     private lookupService: LookupService,
-
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -80,9 +88,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   loadUsers() {
-    this.userService.getUsersWithFilter(this.filters).subscribe({
+    const params = {
+      ...this.filters,
+      page: this.pageIndex,
+      limit: this.pageSize
+    };
+
+    this.userService.getUsersWithFilter(params).subscribe({
       next: (response: any) => {
         this.dataSource.data = response.items || response.data || [];
+        this.totalItems = response.total;
         console.log('Đã tải danh sách users:', response);
       },
       error: (error) => {
@@ -116,7 +131,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       next: (departments: any) => {
         // Map departments to SelectOption format { value, label }
         this.departmentOptions = (departments.data || []).map((d: any) => ({
-          value: d.id ?? d.departmentId,
+          value: d.id,
           label: d.departmentName ?? 'Unknown'
         }));
 
@@ -175,7 +190,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   onSearch(searchTerm: string) {
     this.filters.keyword = searchTerm;
-    this.filters.page = 0; // Reset to first page when searching
+    this.pageIndex = 0; // Reset to first page when searching
+    this.loadUsers();
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.loadUsers();
   }
 
@@ -183,11 +204,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
     // Handle multiple selection - send array to backend
     if (Array.isArray(values) && values.length > 0) {
       // If 'all' is selected, send empty array
-    this.filters.page = 1;
+      this.filters.departmentId = values.includes('all') ? [] : values;
     } else {
       this.filters.departmentId = [];
     }
-    this.filters.page = 0;
+    this.pageIndex = 0; // Reset to first page when filtering
     this.loadUsers();
   }
 
@@ -195,11 +216,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
     // Handle multiple selection - send array to backend
     if (Array.isArray(values) && values.length > 0) {
       // If 'all' is selected, send empty array
-    this.filters.page = 1;
+      this.filters.positionCd = values.includes('all') ? [] : values;
     } else {
       this.filters.positionCd = [];
     }
-    this.filters.page = 0;
+    this.pageIndex = 0; // Reset to first page when filtering
     this.loadUsers();
   }
 
@@ -207,11 +228,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
     // Handle multiple selection - send array to backend
     if (Array.isArray(values) && values.length > 0) {
       // If 'all' is selected, send empty array
-    this.filters.page = 1;
+      this.filters.companyId = values.includes('all') ? [] : values;
     } else {
       this.filters.companyId = [];
     }
-    this.filters.page = 0;
+    this.pageIndex = 0; // Reset to first page when filtering
     this.loadUsers();
   }
 
@@ -221,9 +242,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
       // If 'all' is selected, send empty array
       this.filters.statusFlg = values.includes('all') ? [] : values;
     } else {
-      this.filters.page = 1;
-      this.loadUsers();
+      this.filters.statusFlg = [];
     }
+    this.pageIndex = 0; // Reset to first page when filtering
+    this.loadUsers();
   }
 
   announceSortChange(sortState: Sort) {
@@ -232,6 +254,84 @@ export class UsersComponent implements OnInit, AfterViewInit {
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+  }
+
+  openCreateUserModal() {
+    const dialogRef = this.dialog.open(FormCreateUserModalComponent, {
+      width: '800px',
+      maxHeight: '90vh',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+
+    // Pass company and department options to the modal
+    dialogRef.componentInstance.companyOptions = this.companyOptions.filter(opt => opt.value !== 'all');
+    dialogRef.componentInstance.departmentOptions = this.departmentOptions.filter(opt => opt.value !== 'all');
+
+    dialogRef.componentInstance.onSubmit.subscribe((data: CreateUserRequest) => {
+      this.handleCreateUser(data);
+    });
+
+    dialogRef.componentInstance.onCancel.subscribe(() => {
+      dialogRef.close();
+    });
+  }
+
+  handleCreateUser(data: CreateUserRequest) {
+    console.log('Creating user:', data);
+    this.userService.createUser(data).subscribe({
+      next: (response: any) => {
+        console.log('User created successfully:', response);
+        this.dialog.closeAll();
+        this.loadUsers(); // Reload users list
+        // You can add a success notification here
+      },
+      error: (error: any) => {
+        console.error('Error creating user:', error);
+        // You can add an error notification here
+      }
+    });
+  }
+
+  openUpdateUserModal(user: UserResponse) {
+    const dialogRef = this.dialog.open(FormUpdateUserModalComponent, {
+      width: '800px',
+      maxHeight: '90vh',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+
+    // Pass user data and options to modal
+    dialogRef.componentInstance.userData = user;
+    dialogRef.componentInstance.companyOptions = this.companyOptions.filter(opt => opt.value !== 'all');
+    dialogRef.componentInstance.departmentOptions = this.departmentOptions.filter(opt => opt.value !== 'all');
+    dialogRef.componentInstance.roleOptions = this.roleOptions.filter(opt => opt.value !== 'all');
+    dialogRef.componentInstance.statusOptions = this.statusOptions.filter(opt => opt.value !== 'all');
+    dialogRef.componentInstance.departmentOptions = this.departmentOptions.filter(opt => opt.value !== 'all');
+
+    dialogRef.componentInstance.onSubmit.subscribe((data: UpdateUserRequest) => {
+      this.handleUpdateUser(user.id, data);
+    });
+
+    dialogRef.componentInstance.onCancel.subscribe(() => {
+      dialogRef.close();
+    });
+  }
+
+  handleUpdateUser(id: string, data: UpdateUserRequest) {
+    console.log('Updating user:', data);
+    this.userService.updateUser(id, data).subscribe({
+      next: (response: any) => {
+        console.log('User updated successfully:', response);
+        this.dialog.closeAll();
+        this.loadUsers(); // Reload users list
+        // You can add a success notification here
+      },
+      error: (error: any) => {
+        console.error('Error updating user:', error);
+        // You can add an error notification here
+      }
+    });
   }
 
   formatDate(date: Date | string | undefined): string {
