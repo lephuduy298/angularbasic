@@ -263,7 +263,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   openCreateUserModal() {
     const dialogRef = this.dialog.open(FormCreateUserModalComponent, {
-      width: '800px',
+      width: '1200px',
+      maxWidth: '95vw',
       maxHeight: '90vh',
       disableClose: false,
       panelClass: 'custom-dialog-container'
@@ -300,7 +301,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   openUpdateUserModal(user: UserResponse) {
     const dialogRef = this.dialog.open(FormUpdateUserModalComponent, {
-      width: '800px',
+      width: '1200px',
+      maxWidth: '95vw',
       maxHeight: '90vh',
       disableClose: false,
       panelClass: 'custom-dialog-container'

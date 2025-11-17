@@ -37,4 +37,23 @@ export class SelectModalComponent implements OnInit {
       this.selectionChange.emit(value);
     });
   }
+
+  // Get the label of the first selected item
+  getFirstSelectedLabel(): string {
+    const values = this.selectControl.value;
+    if (!values || (Array.isArray(values) && values.length === 0)) {
+      return '';
+    }
+
+    const firstValue = Array.isArray(values) ? values[0] : values;
+    const option = this.options.find(opt => opt.value === firstValue);
+    return option ? option.label : '';
+  }
+
+  // Get count of selected items
+  getSelectedCount(): number {
+    const values = this.selectControl.value;
+    if (!values) return 0;
+    return Array.isArray(values) ? values.length : 1;
+  }
 }

@@ -1,22 +1,22 @@
-<form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
+<form [formGroup]="userForm" (ngSubmit)="handleSubmit()" class="bg-gray-100 p-6 rounded-lg">
   <div class="space-y-12">
-    <div class="border-b border-white/10 pb-12">
-      <h2 class="text-base/7 font-semibold text-white">Tạo người dùng mới</h2>
-      <p class="mt-1 text-sm/6 text-gray-400">Thông tin tài khoản người dùng</p>
+    <div class="border-b border-gray-300 pb-12">
+      <h2 class="text-xl font-semibold text-gray-900">Tạo người dùng mới</h2>
+      <p class="mt-1 text-sm text-gray-600">Thông tin tài khoản người dùng</p>
 
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <!-- Username -->
         <div class="sm:col-span-3">
-          <label for="userName" class="block text-sm/6 font-medium text-white">Tên đăng nhập <span class="text-red-500">*</span></label>
+          <label for="userName" class="block text-sm font-medium text-gray-900">Tên đăng nhập <span class="text-red-600">*</span></label>
           <div class="mt-2">
             <input
               id="userName"
               type="text"
               formControlName="userName"
               [class.border-red-500]="hasError('userName')"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <p *ngIf="hasError('userName')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('userName')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('userName') }}
             </p>
           </div>
@@ -24,16 +24,16 @@
 
         <!-- Email -->
         <div class="sm:col-span-3">
-          <label for="email" class="block text-sm/6 font-medium text-white">Email <span class="text-red-500">*</span></label>
+          <label for="email" class="block text-sm font-medium text-gray-900">Email <span class="text-red-600">*</span></label>
           <div class="mt-2">
             <input
               id="email"
               type="email"
               formControlName="email"
               [class.border-red-500]="hasError('email')"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <p *ngIf="hasError('email')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('email')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('email') }}
             </p>
           </div>
@@ -41,16 +41,16 @@
 
         <!-- Password -->
         <div class="sm:col-span-3">
-          <label for="password" class="block text-sm/6 font-medium text-white">Mật khẩu <span class="text-red-500">*</span></label>
+          <label for="password" class="block text-sm font-medium text-gray-900">Mật khẩu <span class="text-red-600">*</span></label>
           <div class="mt-2">
             <input
               id="password"
               type="password"
               formControlName="password"
               [class.border-red-500]="hasError('password')"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <p *ngIf="hasError('password')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('password')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('password') }}
             </p>
           </div>
@@ -58,16 +58,16 @@
 
         <!-- Full Name -->
         <div class="sm:col-span-3">
-          <label for="fullName" class="block text-sm/6 font-medium text-white">Họ và tên <span class="text-red-500">*</span></label>
+          <label for="fullName" class="block text-sm font-medium text-gray-900">Họ và tên <span class="text-red-600">*</span></label>
           <div class="mt-2">
             <input
               id="fullName"
               type="text"
               formControlName="fullName"
               [class.border-red-500]="hasError('fullName')"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <p *ngIf="hasError('fullName')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('fullName')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('fullName') }}
             </p>
           </div>
@@ -75,7 +75,7 @@
 
         <!-- Department ID -->
         <div class="sm:col-span-3">
-          <label for="departmentId" class="block text-sm/6 font-medium text-white">Đơn vị <span class="text-red-500">*</span></label>
+          <label for="departmentId" class="block text-sm font-medium text-gray-900">Đơn vị <span class="text-red-600">*</span></label>
           <div class="mt-2">
             <app-select-modal
               [options]="departmentOptions"
@@ -84,7 +84,7 @@
               [initialValue]="userForm.get('departmentId')?.value"
               (selectionChange)="onDepartmentChange($event)"
             ></app-select-modal>
-            <p *ngIf="hasError('departmentId')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('departmentId')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('departmentId') }}
             </p>
           </div>
@@ -92,7 +92,7 @@
 
         <!-- Company Profile ID -->
         <div class="sm:col-span-3">
-          <label for="companyProfileId" class="block text-sm/6 font-medium text-white">Công ty <span class="text-red-500">*</span></label>
+          <label for="companyProfileId" class="block text-sm font-medium text-gray-900">Công ty <span class="text-red-600">*</span></label>
           <div class="mt-2">
             <app-select-modal
               [options]="companyOptions"
@@ -101,7 +101,7 @@
               [initialValue]="userForm.get('companyProfileId')?.value"
               (selectionChange)="onCompanyChange($event)"
             ></app-select-modal>
-            <p *ngIf="hasError('companyProfileId')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('companyProfileId')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('companyProfileId') }}
             </p>
           </div>
@@ -109,19 +109,19 @@
 
         <!-- Description -->
         <div class="col-span-full">
-          <label for="description" class="block text-sm/6 font-medium text-white">Mô tả</label>
+          <label for="description" class="block text-sm font-medium text-gray-900">Mô tả</label>
           <div class="mt-2">
             <textarea
               id="description"
               formControlName="description"
               rows="3"
               [class.border-red-500]="hasError('description')"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             ></textarea>
-            <p *ngIf="hasError('description')" class="mt-2 text-sm text-red-500">
+            <p *ngIf="hasError('description')" class="mt-2 text-sm text-red-600">
               {{ getErrorMessage('description') }}
             </p>
-            <p class="mt-3 text-sm/6 text-gray-400">Mô tả ngắn gọn về người dùng (tùy chọn)</p>
+            <p class="mt-3 text-sm text-gray-600">Mô tả ngắn gọn về người dùng (tùy chọn)</p>
           </div>
         </div>
       </div>
@@ -129,13 +129,13 @@
   </div>
 
   <div class="mt-6 flex items-center justify-end gap-x-6">
-    <button type="button" (click)="handleCancel()" class="text-sm/6 font-semibold text-white hover:text-gray-300">Hủy</button>
+    <button type="button" (click)="handleCancel()" class="text-sm font-semibold text-gray-700 hover:text-gray-900">Hủy</button>
     <button
       type="submit"
       [disabled]="userForm.invalid"
       [class.opacity-50]="userForm.invalid"
       [class.cursor-not-allowed]="userForm.invalid"
-      class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+      class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
       Tạo mới
     </button>
   </div>

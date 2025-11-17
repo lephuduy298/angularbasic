@@ -1,58 +1,8 @@
-// Force dark background for the form
-:host {
-  display: block;
-  background-color: #1f2937;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  color: white;
-}
-
-// Override Material dialog background
+// Override Material dialog background to light gray
 ::ng-deep .mat-mdc-dialog-surface {
-  background-color: #1f2937 !important;
+  background-color: #f3f4f6 !important;
 }
 
-// Ensure all text is visible
-form {
-  color: white;
-}
 
-label {
-  color: white !important;
-}
 
-input, textarea, select {
-  color: white !important;
-  background-color: rgba(255, 255, 255, 0.05) !important;
-
-  &::placeholder {
-    color: rgb(107, 114, 128) !important;
-  }
-
-  // Error state
-  &.border-red-500 {
-    border: 2px solid rgb(239, 68, 68) !important;
-    outline-color: rgb(239, 68, 68) !important;
-  }
-}
-
-button {
-  cursor: pointer;
-
-  &.cursor-not-allowed {
-    cursor: not-allowed;
-  }
-}
-
-.text-gray-400 {
-  color: rgb(156, 163, 175);
-}
-
-.text-red-500 {
-  color: rgb(239, 68, 68);
-}
-
-.opacity-50 {
-  opacity: 0.5;
-}
 
