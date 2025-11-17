@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UpdateUserRequest, UserResponse } from '../../../models/user.model';
 import { SelectModalComponent, SelectOption } from '../select-modal/select-modal.component';
+import { UserService } from '../../../features/services/user.service';
 
 @Component({
   selector: 'app-form-update-user-modal',
@@ -20,10 +21,13 @@ export class FormUpdateUserModalComponent implements OnInit {
 
   @Output() onSubmit = new EventEmitter<UpdateUserRequest>();
   @Output() onCancel = new EventEmitter<void>();
+  @Output() onStatusChanged = new EventEmitter<void>();
 
   userForm!: FormGroup;
+  isActivating = false;
+  isDeactivating = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private userService: UserService) {}
 
   ngOnInit() {
     this.userForm = this.fb.group({
@@ -201,6 +205,55 @@ export class FormUpdateUserModalComponent implements OnInit {
   onStatusChange(value: any) {
     this.userForm.patchValue({ statusFlg: value });
     this.userForm.get('statusFlg')?.markAsTouched();
+  }
+
+  // Activate user
+  handleActivate() {
+    if (this.userData?.id) {
+      this.isActivating = true;
+      this.userService.activateUser(this.userData.id).subscribe({
+        next: (response) => {
+          console.log('User activated successfully:', response);
+          this.isActivating = false;
+          this.userData.statusFlg = 1; // Update local status
+          this.userForm.patchValue({ statusFlg: 1 });
+          this.onStatusChanged.emit();
+          alert('Kích hoạt người dùng thành công!');
+        },
+        error: (error) => {
+          console.error('Error activating user:', error);
+          this.isActivating = false;
+          alert('Có lỗi xảy ra khi kích hoạt người dùng!');
+        }
+      });
+    }
+  }
+
+  // Deactivate user
+  handleDeactivate() {
+    if (this.userData?.id) {
+      this.isDeactivating = true;
+      this.userService.deactivateUser(this.userData.id).subscribe({
+        next: (response) => {
+          console.log('User deactivated successfully:', response);
+          this.isDeactivating = false;
+          this.userData.statusFlg = 0; // Update local status
+          this.userForm.patchValue({ statusFlg: 0 });
+          this.onStatusChanged.emit();
+          alert('Hủy kích hoạt người dùng thành công!');
+        },
+        error: (error) => {
+          console.error('Error deactivating user:', error);
+          this.isDeactivating = false;
+          alert('Có lỗi xảy ra khi hủy kích hoạt người dùng!');
+        }
+      });
+    }
+  }
+
+  // Check if user is active
+  isUserActive(): boolean {
+    return this.userData?.statusFlg === 1;
   }
 
   protected readonly Number = Number;

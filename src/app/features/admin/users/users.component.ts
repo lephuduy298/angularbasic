@@ -6,6 +6,8 @@ import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SelectionModel } from '@angular/cdk/collections';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { UserService } from '../../services/user.service';
 import { UserResponse, CreateUserRequest, UpdateUserRequest } from '../../../models/user.model';
@@ -21,13 +23,13 @@ import {FormUpdateUserModalComponent} from '../../../shared/modal/form-update-us
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatDialogModule, SearchModalComponent, SelectModalComponent, PaginationModalComponent],
+  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatDialogModule, MatCheckboxModule, SearchModalComponent, SelectModalComponent, PaginationModalComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
 export class UsersComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'stt',
+    'select',
     'userName',
     'departmentName',
     'roleName',
@@ -43,6 +45,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     'updatedBy'
   ];
   dataSource = new MatTableDataSource<UserResponse>([]);
+  selection = new SelectionModel<UserResponse>(true, []);
 
   // Pagination
   totalItems: number = 0;
@@ -318,6 +321,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
     dialogRef.componentInstance.onCancel.subscribe(() => {
       dialogRef.close();
     });
+
+    // Listen to status change event to reload users
+    dialogRef.componentInstance.onStatusChanged.subscribe(() => {
+      this.loadUsers(); // Reload users list when status is changed
+    });
   }
 
   handleUpdateUser(id: string, data: UpdateUserRequest) {
@@ -351,5 +359,108 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: UserResponse): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.userName}`;
+  }
+
+  /** Get selected user IDs */
+  getSelectedUserIds(): string[] {
+    return this.selection.selected.map(user => user.id);
+  }
+
+  /** Check if any users are selected */
+  hasSelectedUsers(): boolean {
+    return this.selection.selected.length > 0;
+  }
+
+  /** Activate multiple users */
+  activateSelectedUsers() {
+    const selectedIds = this.getSelectedUserIds();
+    if (selectedIds.length === 0) {
+      alert('Vui lòng chọn ít nhất một người dùng!');
+      return;
+    }
+
+    if (!confirm(`Bạn có chắc chắn muốn kích hoạt ${selectedIds.length} người dùng đã chọn?`)) {
+      return;
+    }
+
+    this.userService.activateMultipleUsers(selectedIds).subscribe({
+      next: (response: any) => {
+        console.log('Users activated successfully:', response);
+        const activatedCount = response.data?.activatedCount || response.activatedCount || selectedIds.length;
+        const failed = response.data?.failed || response.failed || [];
+
+        if (failed.length > 0) {
+          alert(`Đã kích hoạt ${activatedCount} người dùng thành công. ${failed.length} người dùng thất bại.`);
+        } else {
+          alert(`Đã kích hoạt ${activatedCount} người dùng thành công!`);
+        }
+
+        this.selection.clear();
+        this.loadUsers();
+      },
+      error: (error: any) => {
+        console.error('Error activating users:', error);
+        alert('Có lỗi xảy ra khi kích hoạt người dùng!');
+      }
+    });
+  }
+
+  /** Deactivate multiple users */
+  deactivateSelectedUsers() {
+    const selectedIds = this.getSelectedUserIds();
+    if (selectedIds.length === 0) {
+      alert('Vui lòng chọn ít nhất một người dùng!');
+      return;
+    }
+
+    if (!confirm(`Bạn có chắc chắn muốn vô hiệu hóa ${selectedIds.length} người dùng đã chọn?`)) {
+      return;
+    }
+
+    this.userService.deactivateMultipleUsers(selectedIds).subscribe({
+      next: (response: any) => {
+        console.log('Users deactivated successfully:', response);
+        const deactivatedCount = response.data?.deactivatedCount || response.deactivatedCount || selectedIds.length;
+        const failed = response.data?.failed || response.failed || [];
+
+        if (failed.length > 0) {
+          alert(`Đã vô hiệu hóa ${deactivatedCount} người dùng thành công. ${failed.length} người dùng thất bại.`);
+        } else {
+          alert(`Đã vô hiệu hóa ${deactivatedCount} người dùng thành công!`);
+        }
+
+        this.selection.clear();
+        this.loadUsers();
+      },
+      error: (error: any) => {
+        console.error('Error deactivating users:', error);
+        alert('Có lỗi xảy ra khi vô hiệu hóa người dùng!');
+      }
+    });
   }
 }

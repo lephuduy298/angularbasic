@@ -109,6 +109,46 @@ export class UserService {
       );
   }
 
+  // Kích hoạt user
+  activateUser(userId: string): Observable<any> {
+    const url = `${this.apiUrl}/${userId}/activate`;
+    return this.http.patch<any>(url, {}, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Đã kích hoạt user id=${userId}`)),
+        catchError(this.handleError<any>('activateUser'))
+      );
+  }
+
+  // Hủy kích hoạt user
+  deactivateUser(userId: string): Observable<any> {
+    const url = `${this.apiUrl}/${userId}/deactivate`;
+    return this.http.patch<any>(url, {}, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Đã hủy kích hoạt user id=${userId}`)),
+        catchError(this.handleError<any>('deactivateUser'))
+      );
+  }
+
+  // Kích hoạt nhiều users cùng lúc
+  activateMultipleUsers(userIds: string[]): Observable<any> {
+    const url = `${this.apiUrl}/activate`;
+    return this.http.patch<any>(url, userIds, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Đã kích hoạt ${userIds.length} users`)),
+        catchError(this.handleError<any>('activateMultipleUsers'))
+      );
+  }
+
+  // Vô hiệu hóa nhiều users cùng lúc
+  deactivateMultipleUsers(userIds: string[]): Observable<any> {
+    const url = `${this.apiUrl}/deactivate`;
+    return this.http.patch<any>(url, userIds, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Đã vô hiệu hóa ${userIds.length} users`)),
+        catchError(this.handleError<any>('deactivateMultipleUsers'))
+      );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(`${operation} thất bại: ${error.message}`);

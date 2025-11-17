@@ -5,7 +5,6 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 @Component({
   selector: 'app-logincomponent',
   imports: [
-    NgClass,
     ReactiveFormsModule
   ],
   templateUrl: './logincomponent.component.html',

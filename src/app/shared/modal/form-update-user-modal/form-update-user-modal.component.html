@@ -1,8 +1,51 @@
 <form [formGroup]="userForm" (ngSubmit)="handleSubmit()">
   <div class="space-y-12">
     <div class="border-b border-white/10 pb-12">
-      <h2 class="text-base/7 font-semibold text-white">Cập nhật người dùng</h2>
-      <p class="mt-1 text-sm/6 text-gray-400">Chỉnh sửa thông tin tài khoản người dùng</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base/7 font-semibold text-white">Cập nhật người dùng</h2>
+          <p class="mt-1 text-sm/6 text-gray-400">Chỉnh sửa thông tin tài khoản người dùng</p>
+        </div>
+
+        <!-- Status Button - Single Button -->
+        <div class="flex items-center gap-3">
+          <span
+            [ngClass]="{
+              'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium': true,
+              'bg-green-500 bg-opacity-10 text-green-400': isUserActive(),
+              'bg-gray-500 bg-opacity-10 text-gray-400': !isUserActive()
+            }"
+          >
+            {{ isUserActive() ? 'Active' : 'Inactive' }}
+          </span>
+
+          <!-- Show Activate button if user is inactive -->
+          <button
+            *ngIf="!isUserActive()"
+            type="button"
+            (click)="handleActivate()"
+            [disabled]="isActivating"
+            [class.opacity-50]="isActivating"
+            [class.cursor-not-allowed]="isActivating"
+            class="rounded-md bg-green-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+          >
+            {{ isActivating ? 'Đang kích hoạt...' : 'Kích hoạt' }}
+          </button>
+
+          <!-- Show Deactivate button if user is active -->
+          <button
+            *ngIf="isUserActive()"
+            type="button"
+            (click)="handleDeactivate()"
+            [disabled]="isDeactivating"
+            [class.opacity-50]="isDeactivating"
+            [class.cursor-not-allowed]="isDeactivating"
+            class="rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+          >
+            {{ isDeactivating ? 'Đang hủy...' : 'Vô hiệu hóa' }}
+          </button>
+        </div>
+      </div>
 
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <!-- Username -->
@@ -310,28 +353,11 @@
               [options]="roleOptions"
               [placeholder]="'Chọn chức vụ'"
               [multiple]="false"
-              [initialValue]="userData?.positionCd ? +userData.positionCd : null"
+              [initialValue]="userData?.positionCd? +userData.positionCd : null"
               (selectionChange)="onRoleChange($event)"
             ></app-select-modal>
             <p *ngIf="hasError('positionCd')" class="mt-2 text-sm text-red-500">
               {{ getErrorMessage('positionCd') }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Status -->
-        <div class="sm:col-span-3">
-          <label for="statusFlg" class="block text-sm/6 font-medium text-white">Trạng thái</label>
-          <div class="mt-2">
-            <app-select-modal
-              [options]="statusOptions"
-              [placeholder]="'Chọn trạng thái'"
-              [multiple]="false"
-              [initialValue]="userData?.statusFlg != null ? +userData.statusFlg : null"
-              (selectionChange)="onStatusChange($event)"
-            ></app-select-modal>
-            <p *ngIf="hasError('statusFlg')" class="mt-2 text-sm text-red-500">
-              {{ getErrorMessage('statusFlg') }}
             </p>
           </div>
         </div>
