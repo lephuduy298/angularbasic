@@ -1,0 +1,90 @@
+<div class="container mx-auto p-6">
+  <!-- Header -->
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Lịch sử thay đổi</h1>
+      <p class="mt-1 text-sm text-gray-600">Người dùng: <span class="font-semibold">{{ userName }}</span></p>
+    </div>
+    <button mat-raised-button (click)="goBack()" class="flex items-center gap-2">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Quay lại</span>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="historyData" class="w-full">
+        <!-- STT Column -->
+        <ng-container matColumnDef="stt">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">STT</th>
+          <td mat-cell *matCellDef="let row; let i = index" class="px-6 py-4 text-sm text-gray-600 border-b border-gray-200">
+            {{ pageIndex * pageSize + i + 1 }}
+          </td>
+        </ng-container>
+
+        <!-- Field Name Column -->
+        <ng-container matColumnDef="fieldName">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Trường thay đổi</th>
+          <td mat-cell *matCellDef="let row" class="px-6 py-4 text-sm text-gray-600 border-b border-gray-200">
+            <span class="font-medium text-blue-600">{{ getFieldNameLabel(row.fieldName) }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Old Value Column -->
+        <ng-container matColumnDef="oldValue">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Giá trị cũ</th>
+          <td mat-cell *matCellDef="let row" class="px-6 py-4 text-sm text-gray-600 border-b border-gray-200">
+            <span class="text-red-600">{{ row.oldValue || '(Trống)' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- New Value Column -->
+        <ng-container matColumnDef="newValue">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Giá trị mới</th>
+          <td mat-cell *matCellDef="let row" class="px-6 py-4 text-sm text-gray-600 border-b border-gray-200">
+            <span class="text-green-600 font-medium">{{ row.newValue || '(Trống)' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Changed By Column -->
+        <ng-container matColumnDef="changedBy">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Người thay đổi</th>
+          <td mat-cell *matCellDef="let row" class="px-6 py-4 text-sm text-gray-600 border-b border-gray-200">
+            {{ row.changedBy }}
+          </td>
+        </ng-container>
+
+        <!-- Changed Date Column -->
+        <ng-container matColumnDef="changedDate">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Ngày thay đổi</th>
+          <td mat-cell *matCellDef="let row" class="px-6 py-4 text-sm text-gray-600 border-b border-gray-200">
+            {{row.changedDate}}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 transition-colors"></tr>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="historyData.length === 0" class="p-12 text-center">
+      <mat-icon class="text-gray-400 text-6xl">history</mat-icon>
+      <p class="mt-4 text-gray-600">Không có lịch sử thay đổi</p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-6">
+    <app-pagination-modal
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="pageSizeOptions"
+      [showFirstLastButtons]="true"
+      (pageChange)="onPageChange($event)">
+    </app-pagination-modal>
+  </div>
+</div>
+

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import {AdminComponent} from './admin.component';
 import {UsersComponent} from './users/users.component';
+import {UserHistoryComponent} from './user-history/user-history.component';
 
 export const adminRoutes: Routes = [
   {
@@ -15,6 +16,10 @@ export const adminRoutes: Routes = [
       {
         path: 'users',
         component: UsersComponent,
+      },
+      {
+        path: 'users/:id/history',
+        component: UserHistoryComponent,
       }
     ],
   }

@@ -1,5 +1,6 @@
 import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
@@ -72,7 +73,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private companyProfileService: CompanyprofileService,
     private departmentService: DepartmentService,
     private lookupService: LookupService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -331,6 +333,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
         console.error('Error updating user:', error);
         // You can add an error notification here
       }
+    });
+  }
+
+  viewUserHistory(user: UserResponse) {
+    this.router.navigate(['/admin/users', user.id, 'history'], {
+      state: { userName: user.userName}
     });
   }
 
