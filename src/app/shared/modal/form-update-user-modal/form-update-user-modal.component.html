@@ -214,21 +214,17 @@
         <div class="sm:col-span-3">
           <label for="genderCd" class="block text-sm font-medium text-gray-900">Giới tính</label>
           <div class="mt-2">
-            <select
-              id="genderCd"
-              formControlName="genderCd"
-              [class.border-red-500]="hasError('genderCd')"
-              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            >
-              <option [ngValue]="null">Chọn giới tính</option>
-              <option [ngValue]="1">Nam</option>
-              <option [ngValue]="2">Nữ</option>
-              <option [ngValue]="3">Khác</option>
-            </select>
+            <app-select-modal
+              [options]="genderOptions"
+              [placeholder]="'Chọn giới tính'"
+              [multiple]="false"
+              [initialValue]="userData?.genderCd ? +userData.genderCd : null"
+              (selectionChange)="onGenderChange($event)"
+            ></app-select-modal>
+            <p *ngIf="hasError('genderCd')" class="mt-2 text-sm text-red-600">
+              {{ getErrorMessage('genderCd') }}
+            </p>
           </div>
-          <p *ngIf="hasError('genderCd')" class="mt-2 text-sm text-red-600">
-            {{ getErrorMessage('genderCd') }}
-          </p>
         </div>
 
         <!-- Address -->
@@ -305,21 +301,17 @@
         <div class="sm:col-span-3">
           <label for="identityTypeCd" class="block text-sm font-medium text-gray-900">Loại giấy tờ</label>
           <div class="mt-2">
-            <select
-              id="identityTypeCd"
-              formControlName="identityTypeCd"
-              [class.border-red-500]="hasError('identityTypeCd')"
-              class="block w-full rounded-md border-0 bg-white px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            >
-              <option [ngValue]="null">Chọn loại</option>
-              <option [ngValue]="1">CMND</option>
-              <option [ngValue]="2">CCCD</option>
-              <option [ngValue]="3">Hộ chiếu</option>
-            </select>
+            <app-select-modal
+              [options]="identityTypeOptions"
+              [placeholder]="'Chọn loại giấy tờ'"
+              [multiple]="false"
+              [initialValue]="userData?.identityTypeCd ? +userData.identityTypeCd : null"
+              (selectionChange)="onIdentityTypeChange($event)"
+            ></app-select-modal>
+            <p *ngIf="hasError('identityTypeCd')" class="mt-2 text-sm text-red-600">
+              {{ getErrorMessage('identityTypeCd') }}
+            </p>
           </div>
-          <p *ngIf="hasError('identityTypeCd')" class="mt-2 text-sm text-red-600">
-            {{ getErrorMessage('identityTypeCd') }}
-          </p>
         </div>
 
         <!-- Identity Issued Date -->

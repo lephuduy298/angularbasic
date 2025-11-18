@@ -20,10 +20,11 @@ import {LookupService} from '../../services/lookup.service';
 import {DepartmentService} from '../../services/department.service';
 import {FormCreateUserModalComponent} from '../../../shared/modal/form-create-user-modal/form-create-user-modal.component';
 import {FormUpdateUserModalComponent} from '../../../shared/modal/form-update-user-modal/form-update-user-modal.component';
+import {NoDataModalComponent} from '../../../shared/modal/no-data-modal/no-data-modal.component';
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatDialogModule, MatCheckboxModule, SearchModalComponent, SelectModalComponent, PaginationModalComponent],
+  imports: [CommonModule, MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatDialogModule, MatCheckboxModule, SearchModalComponent, SelectModalComponent, PaginationModalComponent, NoDataModalComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -58,6 +59,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   roleOptions: SelectOption[] = [];
   companyOptions: SelectOption[] = [];
   statusOptions: SelectOption[] = [];
+  genderOptions: SelectOption[] = [];
+  identityTypeOptions: SelectOption[] = [];
 
   // Current filter values
   filters = {
@@ -86,6 +89,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.loadDepartment();
     this.loadLookupPosition();
     this.loadLookupStatus();
+    this.loadLookupGender();
+    this.loadLookupIdentityType();
   }
 
   ngAfterViewInit() {
@@ -189,6 +194,40 @@ export class UsersComponent implements OnInit, AfterViewInit {
       },
       error: (error: any) => {
         console.error('Error loading statuses:', error);
+      }
+    })
+  }
+
+  loadLookupGender() {
+    this.lookupService.getByLookupType('GENDER').subscribe({
+      next: (genders: any) => {
+        // Map genders to SelectOption format { value, label }
+        this.genderOptions = genders.data.map((g: any) => ({
+          value: g.lookupCd,
+          label: g.lookupValue ?? 'Unknown'
+        }));
+
+        console.log('Genders loaded:', this.genderOptions);
+      },
+      error: (error: any) => {
+        console.error('Error loading genders:', error);
+      }
+    })
+  }
+
+  loadLookupIdentityType() {
+    this.lookupService.getByLookupType('IDENTITY_TYPE').subscribe({
+      next: (identityTypes: any) => {
+        // Map identity types to SelectOption format { value, label }
+        this.identityTypeOptions = identityTypes.data.map((i: any) => ({
+          value: i.lookupCd,
+          label: i.lookupValue ?? 'Unknown'
+        }));
+
+        console.log('Identity types loaded:', this.identityTypeOptions);
+      },
+      error: (error: any) => {
+        console.error('Error loading identity types:', error);
       }
     })
   }
@@ -314,7 +353,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     dialogRef.componentInstance.departmentOptions = this.departmentOptions.filter(opt => opt.value !== 'all');
     dialogRef.componentInstance.roleOptions = this.roleOptions.filter(opt => opt.value !== 'all');
     dialogRef.componentInstance.statusOptions = this.statusOptions.filter(opt => opt.value !== 'all');
-    dialogRef.componentInstance.departmentOptions = this.departmentOptions.filter(opt => opt.value !== 'all');
+    dialogRef.componentInstance.genderOptions = this.genderOptions;
+    dialogRef.componentInstance.identityTypeOptions = this.identityTypeOptions;
 
     dialogRef.componentInstance.onSubmit.subscribe((data: UpdateUserRequest) => {
       this.handleUpdateUser(user.id, data);

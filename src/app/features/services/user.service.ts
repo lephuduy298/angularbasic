@@ -67,7 +67,6 @@ export class UserService {
       );
   }
 
-
   // Lấy user theo username
   getUserByUsername(username: string): Observable<UserResponse> {
     const url = `${this.apiUrl}/${username}`;
@@ -75,15 +74,6 @@ export class UserService {
       .pipe(
         tap(_ => console.log(`Đã lấy user username=${username}`)),
         catchError(this.handleError<UserResponse>(`getUserByUsername username=${username}`))
-      );
-  }
-
-  // Thêm user mới
-  addUser(user: UserResponse): Observable<UserResponse> {
-    return this.http.post<UserResponse>(this.apiUrl, user, this.httpOptions)
-      .pipe(
-        tap((newUser: UserResponse) => console.log(`Đã thêm user username=${newUser}`)),
-        catchError(this.handleError<UserResponse>('addUser'))
       );
   }
 

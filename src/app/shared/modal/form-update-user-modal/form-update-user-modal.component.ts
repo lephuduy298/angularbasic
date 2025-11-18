@@ -18,6 +18,8 @@ export class FormUpdateUserModalComponent implements OnInit {
   @Input() departmentOptions: SelectOption[] = [];
   @Input() roleOptions: SelectOption[] = [];
   @Input() statusOptions: SelectOption[] = [];
+  @Input() identityTypeOptions: SelectOption[] = [];
+  @Input() genderOptions: SelectOption[] = [];
 
   @Output() onSubmit = new EventEmitter<UpdateUserRequest>();
   @Output() onCancel = new EventEmitter<void>();
@@ -207,6 +209,18 @@ export class FormUpdateUserModalComponent implements OnInit {
     this.userForm.get('statusFlg')?.markAsTouched();
   }
 
+  // Handle identity type selection change
+  onIdentityTypeChange(value: any) {
+    this.userForm.patchValue({ identityTypeCd: value });
+    this.userForm.get('identityTypeCd')?.markAsTouched();
+  }
+
+  // Handle gender selection change
+  onGenderChange(value: any) {
+    this.userForm.patchValue({ genderCd: value });
+    this.userForm.get('genderCd')?.markAsTouched();
+  }
+
   // Activate user
   handleActivate() {
     if (this.userData?.id) {
@@ -258,4 +272,3 @@ export class FormUpdateUserModalComponent implements OnInit {
 
   protected readonly Number = Number;
 }
-

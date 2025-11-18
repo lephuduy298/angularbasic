@@ -65,13 +65,18 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 transition-colors"></tr>
-      </table>
-    </div>
 
-    <!-- Empty State -->
-    <div *ngIf="historyData.length === 0" class="p-12 text-center">
-      <mat-icon class="text-gray-400 text-6xl">history</mat-icon>
-      <p class="mt-4 text-gray-600">Không có lịch sử thay đổi</p>
+        <!-- No Data Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+            <app-no-data-modal
+              [icon]="'history'"
+              [title]="'Không có lịch sử thay đổi'"
+              [message]="'Người dùng này chưa có lịch sử thay đổi nào'">
+            </app-no-data-modal>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 

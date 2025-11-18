@@ -9,6 +9,7 @@ import { UserHistoryService } from '../../services/user-history.service';
 import { UserHistory } from '../../../models/user-history.model';
 import { PaginationModalComponent } from '../../../shared/modal/pagination-modal/pagination-modal.component';
 import { PageEvent } from '@angular/material/paginator';
+import { NoDataModalComponent } from '../../../shared/modal/no-data-modal/no-data-modal.component';
 
 @Component({
   selector: 'app-user-history',
@@ -19,7 +20,8 @@ import { PageEvent } from '@angular/material/paginator';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    PaginationModalComponent
+    PaginationModalComponent,
+    NoDataModalComponent
   ],
   templateUrl: './user-history.component.html',
   styleUrls: ['./user-history.component.scss']

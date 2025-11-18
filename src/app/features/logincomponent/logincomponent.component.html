@@ -1,0 +1,90 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-300 px-4 py-12">
+  <div class="w-full max-w-md">
+    <div class="bg-white p-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-5xl font-bold text-blue-600 mb-4">Login</h1>
+        <p class="text-gray-700 text-lg">Sign in to your account</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Username Field -->
+        <div class="mb-6">
+          <div class="flex items-center bg-gray-100 rounded-lg px-4 py-3">
+            <mat-icon class="text-gray-600 mr-3">person_outline</mat-icon>
+            <input
+              type="text"
+              formControlName="username"
+              placeholder="Username"
+              [disabled]="isLoading"
+              autocomplete="username"
+              class="bg-transparent flex-1 outline-none text-gray-700 placeholder-gray-400">
+          </div>
+          <div *ngIf="username.errors?.['required'] && username.touched" class="text-red-600 text-xs mt-1 ml-1">
+            Tên đăng nhập không được để trống
+          </div>
+          <div *ngIf="username.errors?.['minlength'] && username.touched" class="text-red-600 text-xs mt-1 ml-1">
+            Tên đăng nhập phải có ít nhất 3 ký tự
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-4">
+          <div class="flex items-center bg-gray-100 rounded-lg px-4 py-3">
+            <mat-icon class="text-gray-600 mr-3">lock_outline</mat-icon>
+            <input
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Password"
+              [disabled]="isLoading"
+              autocomplete="current-password"
+              class="bg-transparent flex-1 outline-none text-gray-700 placeholder-gray-400">
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [disabled]="isLoading"
+              class="ml-2 text-gray-600 focus:outline-none">
+              <mat-icon class="text-xl">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <div *ngIf="password.errors?.['required'] && password.touched" class="text-red-600 text-xs mt-1 ml-1">
+            Mật khẩu không được để trống
+          </div>
+          <div *ngIf="password.errors?.['minlength'] && password.touched" class="text-red-600 text-xs mt-1 ml-1">
+            Mật khẩu phải có ít nhất 3 ký tự
+          </div>
+        </div>
+
+        <!-- Forgot Password -->
+        <div class="text-right mb-6">
+          <a class="text-blue-600 text-sm hover:underline">Forgot password?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="isLoading || loginForm.invalid"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+          <span *ngIf="!isLoading">Login</span>
+          <span *ngIf="isLoading" class="flex items-center justify-center">
+            <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+            Đang đăng nhập...
+          </span>
+        </button>
+
+        <!-- Register Link -->
+        <div class="text-center mt-6">
+          <span class="text-gray-700">Don't have an account? </span>
+          <a class="text-blue-600 font-semibold hover:underline">Register here</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

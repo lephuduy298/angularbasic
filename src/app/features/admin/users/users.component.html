@@ -1,21 +1,22 @@
 <!-- Filter Section -->
-<div class="bg-gray-50 p-6 border-b border-gray-200">
-  <div class="flex flex-wrap items-center gap-4">
-    <!-- Search Input -->
-    <div class="flex-1 min-w-[300px]">
-      <app-search-modal
-        placeholder="Tìm kiếm theo tên, email, username..."
-        (searchChange)="onSearch($event)">
-      </app-search-modal>
-    </div>
+  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100 shadow-sm">
+  <!-- Search Bar -->
+  <div class="mb-4">
+    <app-search-modal
+      placeholder="Tìm kiếm theo tên, email, username..."
+      (searchChange)="onSearch($event)">
+    </app-search-modal>
+  </div>
 
+  <!-- Filters and Actions -->
+  <div class="flex flex-wrap items-center justify-between gap-4">
     <!-- Filter Selects -->
     <div class="flex flex-wrap items-center gap-3">
       <app-select-modal
         [placeholder]="'Đơn vị'"
         [options]="departmentOptions"
         [multiple]="true"
-        [width]="'200px'"
+        [width]="'220px'"
         (selectionChange)="onDepartmentChange($event)">
       </app-select-modal>
 
@@ -23,7 +24,7 @@
         [placeholder]="'Vai trò'"
         [options]="roleOptions"
         [multiple]="true"
-        [width]="'200px'"
+        [width]="'220px'"
         (selectionChange)="onRoleChange($event)">
       </app-select-modal>
 
@@ -31,7 +32,7 @@
         [placeholder]="'Công ty'"
         [options]="companyOptions"
         [multiple]="true"
-        [width]="'200px'"
+        [width]="'220px'"
         (selectionChange)="onCompanyChange($event)">
       </app-select-modal>
 
@@ -39,19 +40,22 @@
         [placeholder]="'Trạng thái'"
         [options]="statusOptions"
         [multiple]="true"
-        [width]="'200px'"
+        [width]="'220px'"
         (selectionChange)="onStatusChange($event)">
       </app-select-modal>
+    </div>
 
+    <!-- Action Buttons -->
+    <div class="flex items-center gap-3">
       <!-- Bulk Action Buttons -->
-      <div class="flex items-center gap-2 border-l border-gray-300 pl-3">
+      <div class="flex items-center gap-2">
         <button
           mat-raised-button
           color="accent"
           (click)="activateSelectedUsers()"
           [disabled]="!hasSelectedUsers()"
-          class="flex items-center gap-1">
-          <mat-icon>check_circle</mat-icon>
+          class="!bg-green-600 hover:!bg-green-700 !text-white transition-all">
+          <mat-icon class="mr-1">check_circle</mat-icon>
           <span>Kích hoạt</span>
         </button>
         <button
@@ -59,24 +63,27 @@
           color="warn"
           (click)="deactivateSelectedUsers()"
           [disabled]="!hasSelectedUsers()"
-          class="flex items-center gap-1">
-          <mat-icon>cancel</mat-icon>
+          class="!bg-red-600 hover:!bg-red-700 !text-white transition-all">
+          <mat-icon class="mr-1">cancel</mat-icon>
           <span>Vô hiệu hóa</span>
         </button>
       </div>
 
-      <button mat-raised-button color="primary" (click)="openCreateUserModal()" class="flex items-center gap-1">
-        <span>Thêm</span>
-        <mat-icon>add</mat-icon>
+      <div class="w-px h-8 bg-gray-300"></div>
+
+      <button mat-raised-button color="primary" (click)="openCreateUserModal()"
+              class="!bg-blue-600 hover:!bg-blue-700 !text-white !px-6 transition-all shadow-md hover:shadow-lg">
+        <mat-icon class="mr-1">add</mat-icon>
+        <span>Thêm người dùng</span>
       </button>
     </div>
   </div>
 </div>
 
 <!-- Table Container -->
-<div class="overflow-x-auto w-full relative table-container bg-white">
+<div class="overflow-x-auto w-full relative table-container bg-white shadow-lg rounded-lg m-4">
   <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
-         class="w-max min-w-full bg-white shadow-md">
+         class="w-max min-w-full bg-white">
 
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
@@ -87,7 +94,7 @@
                       [aria-label]="checkboxLabel()">
         </mat-checkbox>
       </th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">
         <mat-checkbox (click)="$event.stopPropagation()"
                       (change)="$event ? selection.toggle(row) : null"
                       [checked]="selection.isSelected(row)"
@@ -99,56 +106,64 @@
     <!-- Username Column -->
     <ng-container matColumnDef="userName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Tên đăng nhập</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.userName }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-b border-gray-100">{{ row.userName }}</td>
     </ng-container>
 
     <!-- Department Column -->
     <ng-container matColumnDef="departmentName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Đơn vị</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.departmentName }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ row.departmentName }}</td>
     </ng-container>
 
     <!-- Role Column -->
     <ng-container matColumnDef="roleName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Vai trò</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.positionTitle }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">
+        @if (row.positionTitle) {
+          <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">{{ row.positionTitle }}</span>
+        }
+      </td>
     </ng-container>
 
     <!-- Full Name Column -->
     <ng-container matColumnDef="fullName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Họ tên</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.fullName }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-b border-gray-100">{{ row.fullName }}</td>
     </ng-container>
 
     <!-- Birth Date Column -->
     <ng-container matColumnDef="birthDate">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Ngày sinh</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ formatDate(row.birthDate) }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ formatDate(row.birthDate) }}</td>
     </ng-container>
 
     <!-- Email Column -->
     <ng-container matColumnDef="email">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Email</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">
-        <div class="max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap" [title]="row.email || ''">{{ row.email }}</div>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 border-b border-gray-100">
+        <div class="max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap hover:text-blue-800" [title]="row.email || ''">{{ row.email }}</div>
       </td>
     </ng-container>
 
     <!-- Company Column -->
     <ng-container matColumnDef="companyName">
       <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Tên công ty</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.companyName }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ row.companyName }}</td>
     </ng-container>
 
     <!-- Details Column -->
     <ng-container matColumnDef="detail">
       <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Thao tác</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">
         <div class="flex gap-2">
-          <button mat-icon-button (click)="openUpdateUserModal(row)" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 transition-colors" title="Cập nhật">
+          <button mat-icon-button (click)="openUpdateUserModal(row)"
+                  class="!text-blue-600 hover:!text-blue-800 hover:!bg-blue-50 transition-all !rounded-lg"
+                  title="Cập nhật">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button (click)="viewUserHistory(row)" class="text-green-600 hover:text-green-800 hover:bg-green-50 transition-colors" title="Xem lịch sử">
+          <button mat-icon-button (click)="viewUserHistory(row)"
+                  class="!text-green-600 hover:!text-green-800 hover:!bg-green-50 transition-all !rounded-lg"
+                  title="Xem lịch sử">
             <mat-icon>history</mat-icon>
           </button>
         </div>
@@ -158,35 +173,57 @@
     <!-- Status Column -->
     <ng-container matColumnDef="statusFlag">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Trạng thái</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.statusFlag }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm border-b border-gray-100">
+        @if (row.statusFlag){
+        <span [ngClass]="{
+          'px-3 py-1 rounded-full text-xs font-semibold': true,
+          'bg-green-100 text-green-800': row.statusFlag === 'Active',
+          'bg-red-100 text-red-800': row.statusFlag === 'Inactive',
+          'bg-gray-100 text-gray-800': row.statusFlag !== 'Active' && row.statusFlag !== 'Inactive'
+        }">
+          {{ row.statusFlag }}
+        </span>
+        }
+      </td>
     </ng-container>
 
     <!-- Created Date Column -->
     <ng-container matColumnDef="createdDate">
       <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Ngày tạo</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ formatDate(row.createdDate) }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ formatDate(row.createdDate) }}</td>
     </ng-container>
 
     <!-- Created By Column -->
     <ng-container matColumnDef="createdBy">
       <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Người tạo</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.createdBy }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ row.createdBy }}</td>
     </ng-container>
 
     <!-- Updated Date Column -->
     <ng-container matColumnDef="updatedDate">
       <th mat-header-cell *matHeaderCellDef class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Ngày cập nhật</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ formatDate(row.lastUpdatedDate) }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ formatDate(row.lastUpdatedDate) }}</td>
     </ng-container>
 
     <!-- Updated By Column -->
     <ng-container matColumnDef="updatedBy">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-100 font-semibold whitespace-nowrap px-6 py-4 text-sm text-gray-800 border-b-2 border-gray-300">Người cập nhật</th>
-      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-b border-gray-200">{{ row.lastUpdatedBy }}</td>
+      <td mat-cell *matCellDef="let row" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">{{ row.lastUpdatedBy }}</td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky top-0 z-10 bg-white"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="transition-colors duration-200 hover:bg-gray-50 cursor-pointer"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky top-0 z-10"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="transition-all duration-200 hover:bg-blue-50 hover:shadow-md cursor-pointer"></tr>
+
+    <!-- No Data Row -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+        <app-no-data-modal
+          [icon]="'people_outline'"
+          [title]="'Không có người dùng'"
+          [message]="'Không tìm thấy dữ liệu phù hợp với tiêu chí tìm kiếm'">
+        </app-no-data-modal>
+      </td>
+    </tr>
   </table>
 </div>
 
